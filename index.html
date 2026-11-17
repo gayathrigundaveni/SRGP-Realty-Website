@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SRGP Realty</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a listings directory. Filter bar on top, card grid below; each project opens as its own view (#p-name) with a rate panel on the right. */
+:root{
+  --bg:#f3f5f3;
+  --surface:#ffffff;
+  --ink:#15201d;
+  --muted:#5d6b66;
+  --line:#dfe5e2;
+  --accent:#1d5c47;
+  --accent-ink:#ffffff;
+  --accent-soft:#e3efe9;
+  --brass:#b07a1f;
+  --brass-soft:#f6ecd9;
+  --good:#23794f; --good-soft:#e1f2e8;
+  --warn:#9a6210; --warn-soft:#fbefd9;
+  --new:#3b5bab; --new-soft:#e5ebf8;
+  --shadow:0 1px 2px rgba(20,35,30,.06),0 8px 24px rgba(20,35,30,.06);
+  --hero:#143f33;
+  --font-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --font-body:"Manrope",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1513; --surface:#17201d; --ink:#e7eeeb; --muted:#9aaba5; --line:#273430;
+    --accent:#5fbf98; --accent-ink:#0c1a15; --accent-soft:#1c2f28;
+    --brass:#e0b15a; --brass-soft:#2c2416;
+    --good:#6fd09f; --good-soft:#18302a; --warn:#e8b25c; --warn-soft:#2e2515; --new:#8fa9ec; --new-soft:#1c2438;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+    --hero:#10261f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1513; --surface:#17201d; --ink:#e7eeeb; --muted:#9aaba5; --line:#273430;
+  --accent:#5fbf98; --accent-ink:#0c1a15; --accent-soft:#1c2f28;
+  --brass:#e0b15a; --brass-soft:#2c2416;
+  --good:#6fd09f; --good-soft:#18302a; --warn:#e8b25c; --warn-soft:#2e2515; --new:#8fa9ec; --new-soft:#1c2438;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  --hero:#10261f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-display);line-height:1.15;text-wrap:balance;margin:0}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* header */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand-logo{width:46px;height:46px;border-radius:10px;display:block;object-fit:cover;background:#000}
+.hero-logo{width:132px;height:132px;border-radius:16px;display:block;background:#000;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.foot-logo{width:88px;height:88px;border-radius:12px;display:block;margin-bottom:10px;background:#000}
+@media (max-width:600px){.hero-logo{width:96px;height:96px}}
+.brand-mark{width:32px;height:32px;border-radius:8px;background:var(--accent);display:grid;place-items:center}
+.brand b{font-family:var(--font-display);font-size:20px;letter-spacing:-.01em}
+.brand span{color:var(--muted);font-size:13px}
+nav.top-nav{display:flex;gap:6px;flex-wrap:wrap}
+nav.top-nav button{border:0;background:none;padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--muted);font-weight:600}
+nav.top-nav button:hover{background:var(--accent-soft);color:var(--ink)}
+.shortlist-btn{border:1px solid var(--line)!important}
+
+/* intro */
+.intro{padding:34px 0 18px}
+.intro h1{font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;max-width:22ch}
+.intro p{color:var(--muted);max-width:62ch;margin:10px 0 0}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:20px}
+.stats div{display:flex;flex-direction:column}
+.stats b{font-family:var(--font-display);font-size:24px}
+.stats span{font-size:13px;color:var(--muted)}
+
+/* filters */
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--surface);padding:7px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-size:14px;display:flex;gap:6px;align-items:center}
+.tab .count{color:var(--muted);font-weight:500}
+.tab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tab[aria-pressed="true"] .count{color:inherit;opacity:.8}
+.filter-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.field input,.field select{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 10px;min-width:0}
+.result-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:22px 0 12px;flex-wrap:wrap}
+.result-bar p{margin:0;color:var(--muted)}
+.link-btn{border:0;background:none;color:var(--accent);font-weight:600;cursor:pointer;padding:4px}
+
+/* grid + cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding-bottom:48px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.card .art{position:relative;aspect-ratio:16/9;background:var(--accent-soft)}
+.card .art svg{display:block;width:100%;height:100%}
+.vid-grid{display:grid;gap:14px}
+.vid-grid.two{grid-template-columns:1fr 1fr}
+.vid{margin:0;display:flex;flex-direction:column;gap:6px}
+.vid video{width:100%;max-height:640px;border-radius:10px;display:block;background:#000}
+.vid figcaption{font-size:14px;color:var(--muted)}
+@media (max-width:600px){.vid-grid.two{grid-template-columns:1fr}}
+.specs{margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px 22px}
+.specs dt{font-weight:700;font-size:14px}
+.specs dd{margin:2px 0 0;color:var(--muted);font-size:14px}
+.panel.otp{border:2px solid var(--brass);background:var(--brass-soft)}
+.otp-row{display:flex;gap:40px;flex-wrap:wrap}
+.chip.video{background:rgba(0,0,0,.65);color:#fff}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.g-item{border:0;padding:0;border-radius:10px;overflow:hidden;aspect-ratio:3/2;cursor:zoom-in;background:var(--accent-soft)}
+.g-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s ease}
+.g-item:hover img{transform:scale(1.04)}
+.lightbox{position:fixed;inset:0;z-index:50;background:rgba(8,12,11,.92);display:flex;align-items:center;justify-content:center;padding:16px}
+.lightbox figure{margin:0;max-width:min(1200px,100%);display:flex;flex-direction:column;align-items:center;gap:10px}
+.lightbox img{max-width:100%;max-height:80vh;border-radius:8px;display:block}
+.lightbox figcaption{color:#e8efec;font-size:15px}
+.lb-btn{position:absolute;border:0;background:rgba(255,255,255,.14);color:#fff;width:46px;height:46px;border-radius:50%;font-size:26px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.lb-btn:hover{background:rgba(255,255,255,.28)}
+.lb-close{top:16px;right:16px;font-size:20px}.lb-prev{left:16px;top:50%;transform:translateY(-50%)}.lb-next{right:16px;top:50%;transform:translateY(-50%)}
+@media (prefers-reduced-motion:reduce){.g-item img{transition:none}}
+.card .art,.cat .art,.d-hero{position:relative;overflow:hidden}
+.card .art img,.cat .art img,.d-hero img,.hero-art img{position:absolute;inset:0}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap}
+.chip.type{background:var(--surface);color:var(--ink)}
+.chip.ready{background:var(--good-soft);color:var(--good)}
+.chip.uc{background:var(--warn-soft);color:var(--warn)}
+.chip.launch{background:var(--new-soft);color:var(--new)}
+.chip.neutral{background:var(--surface);color:var(--muted)}
+.art .chips{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.save{position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:50%;border:0;background:var(--surface);cursor:pointer;display:grid;place-items:center;box-shadow:var(--shadow)}
+.save svg{width:18px;height:18px}
+.save[aria-pressed="true"] path{fill:var(--brass);stroke:var(--brass)}
+.card .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card h3{font-size:19px}
+.loc{color:var(--muted);font-size:14px;display:flex;gap:4px;align-items:center}
+.card .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid var(--line);padding-top:10px;margin-top:auto}
+.fact span{display:block;font-size:12px;color:var(--muted)}
+.fact b{font-size:15px}
+.rate{color:var(--accent)}
+.price-line{font-size:14px;color:var(--muted)}
+.price-line b{color:var(--ink);font-size:16px}
+.empty{grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:14px}
+
+/* detail */
+.detail{padding-top:20px;padding-bottom:56px}
+.back{border:0;background:none;color:var(--accent);font-weight:700;cursor:pointer;padding:6px 0;margin-bottom:10px}
+.d-hero{border-radius:16px;overflow:hidden;aspect-ratio:21/8;background:var(--accent-soft);position:relative}
+.d-hero svg{display:block;width:100%;height:100%}
+.d-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:20px 0}
+.d-head h1{font-size:clamp(26px,3.6vw,38px);letter-spacing:-.02em}
+.d-head .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.d-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.panel+ .panel{margin-top:16px}
+.panel h2{font-size:19px;margin-bottom:12px}
+.keyfacts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.keyfacts .fact b{font-size:16px}
+.desc{max-width:65ch;margin:0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+.table-wrap{overflow-x:auto}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+td.r,th.r{text-align:right}
+.amen{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
+.amen li{background:var(--accent-soft);color:var(--ink);padding:6px 11px;border-radius:8px;font-size:14px}
+.hl{margin:0;padding-left:18px}
+.hl li{margin:4px 0}
+aside.side{position:sticky;top:80px;display:flex;flex-direction:column;gap:16px}
+.rate-big{font-family:var(--font-display);font-size:34px;color:var(--accent);line-height:1}
+.rate-big small{font-family:var(--font-body);font-size:15px;color:var(--muted);font-weight:500}
+.alt-rates{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:14px;color:var(--muted)}
+.range{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.calc{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+.calc select{width:100%}
+.calc .row{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.calc input[type=range]{width:100%;accent-color:var(--accent)}
+.calc .total{font-size:22px;font-family:var(--font-display)}
+.emi{background:var(--brass-soft);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center}
+.emi b{font-size:20px;color:var(--brass)}
+form.enq{display:grid;gap:10px}
+form.enq input,form.enq select,form.enq textarea{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:9px 10px;width:100%}
+.btn{border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;padding:11px 16px;border-radius:10px;cursor:pointer}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.note{font-size:13px;color:var(--muted);margin:0}
+.notice{background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:14px}
+/* hero */
+.hero{position:relative;background:var(--hero);color:#f2f5f3;overflow:hidden}
+.hero-art{position:absolute;inset:0}
+.hero-art .slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
+.hero-art .slide.on{opacity:1}
+.hero-art::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,30,24,.92) 0%,rgba(10,30,24,.75) 45%,rgba(10,30,24,.25) 100%)}
+.hero-caption{position:absolute;right:20px;bottom:14px;z-index:1;font-size:12px;color:#d5e0db;background:rgba(0,0,0,.35);padding:4px 10px;border-radius:999px}
+@media (max-width:700px){.hero-art::after{background:rgba(10,30,24,.78)}}
+@media (prefers-reduced-motion:reduce){.hero-art .slide{transition:none}}
+.hero-art svg{width:100%;height:100%;display:block}
+.hero-inner{position:relative;padding:56px 20px 44px;display:flex;flex-direction:column;gap:14px}
+.hero h1{font-size:clamp(32px,5vw,54px);letter-spacing:-.02em;max-width:18ch}
+.hero .lede{max-width:56ch;margin:0;color:#d5e0db;font-size:17px}
+.hero .stats b{color:#fff}.hero .stats span{color:#c3d1cb}
+.eyebrow{margin:0;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brass)}
+.hero .eyebrow{color:#e6bf73}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.btn.brass{background:#c9973c;color:#1b1407}
+.btn.outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:18px}
+.stats div{display:flex;flex-direction:column}
+.stats b{font-family:var(--font-display);font-size:24px}
+.stats span{font-size:13px;color:var(--muted)}
+.sec-title{font-size:26px;margin:36px 0 16px;letter-spacing:-.01em;scroll-margin-top:80px}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.cat{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;text-align:left;padding:0;display:flex;flex-direction:column}
+.cat:hover{box-shadow:var(--shadow)}
+.cat .art{aspect-ratio:16/10}
+.cat .art svg{width:100%;height:100%;display:block}
+.cat div.t{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cat b{font-family:var(--font-display);font-size:18px}
+.cat span{font-size:13px;color:var(--accent);font-weight:700;white-space:nowrap}
+.band{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:48px 0;scroll-margin-top:62px}
+.about{display:grid;grid-template-columns:1fr 1.3fr;gap:32px;align-items:start}
+.about h2{font-size:28px;margin:8px 0 12px}
+.about p{color:var(--muted);max-width:52ch}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.feature{border-left:3px solid var(--brass);padding:4px 0 4px 14px;display:flex;flex-direction:column;gap:4px}
+.feature span{color:var(--muted);font-size:14px}
+.cta-band{margin-top:36px;background:var(--hero);color:#f2f5f3;border-radius:16px;padding:26px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.cta-band h2{font-size:24px}.cta-band p{margin:6px 0 0;color:#d5e0db}
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding-top:44px;padding-bottom:56px;scroll-margin-top:62px}
+.contact h2{font-size:28px;margin:8px 0 16px}
+.contact-list{margin:0;display:grid;gap:14px}
+.contact-list dt{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.contact-list dd{margin:2px 0 0;font-size:17px;font-weight:600}
+footer{border-top:1px solid var(--line);padding:30px 0 20px;color:var(--muted);font-size:14px;background:var(--surface)}
+.foot{display:grid;grid-template-columns:2fr 1fr 1fr;gap:24px}
+.foot div{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.foot b{color:var(--ink)}
+.foot-brand{font-family:var(--font-display);font-size:20px}
+.foot p{margin:0;max-width:40ch}
+.foot button{border:0;background:none;padding:0;color:var(--muted);cursor:pointer}
+.foot button:hover{color:var(--accent)}
+.foot-note{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);font-size:12px}
+@media (max-width:900px){.cat-grid{grid-template-columns:1fr 1fr}.about,.contact{grid-template-columns:1fr}.foot{grid-template-columns:1fr 1fr}}
+@media (max-width:420px){.features{grid-template-columns:1fr}}
+.hidden{display:none!important}
+
+@media (max-width:900px){
+  .filter-row{grid-template-columns:1fr 1fr}
+  .filter-row .field:first-child{grid-column:1/-1}
+  .d-layout{grid-template-columns:1fr}
+  aside.side{position:static}
+  .d-hero{aspect-ratio:16/9}
+}
+@media (max-width:420px){
+  .brand span{display:none}
+  .card .facts{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+@media (max-width:760px){
+  header.top{position:sticky}
+  header.top .wrap{height:auto;flex-wrap:wrap;gap:6px 12px;padding-top:8px;padding-bottom:6px}
+  .brand b{font-size:18px}
+  .brand span:not(.brand-logo){display:none}
+  nav.top-nav{width:100%;flex-wrap:nowrap;overflow-x:auto;gap:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  nav.top-nav::-webkit-scrollbar{display:none}
+  nav.top-nav button{white-space:nowrap;flex:none;padding:6px 10px}
+  .hero-caption{display:none}
+}
+@media (max-width:760px){
+  .d-layout>div,.d-layout>aside{min-width:0}
+  .keyfacts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fact b{overflow-wrap:anywhere}
+  .filters{min-width:0}
+  .filter-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .filter-row .field{min-width:0}
+  .filter-row .field label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tabs{flex-wrap:wrap}
+  .specs{grid-template-columns:1fr}
+  .vid-grid.two{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" id="home-link">
+      <img class="brand-logo" src="images/logo-sm.jpg" alt="SRGP Realty logo" width="46" height="46">
+      <b>SRGP Realty</b><span>Hyderabad</span>
+    </a>
+    <nav class="top-nav" aria-label="Property types">
+      <button data-nav="apartment">Apartments</button>
+      <button data-nav="villa">Villas</button>
+      <button data-nav="plot">Open Plots</button>
+      <button data-nav="land">Farm Land</button>
+      <button data-jump="about">About</button>
+      <button data-jump="contact">Contact</button>
+      <button class="shortlist-btn" id="shortlist-nav">Shortlist (<span id="sl-count" class="num">0</span>)</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- LIST VIEW -->
+  <section id="list-view">
+    <div class="wrap">
+    </div>
+    <div class="hero">
+      <div class="hero-art" id="hero-art" aria-hidden="true"></div>
+      <div class="hero-caption" id="hero-caption" aria-live="off"></div>
+      <div class="wrap hero-inner">
+        <p class="eyebrow">Apartments · Villas · Open Plots · Farm Land</p>
+        <h1>Find your next home or plot in Hyderabad</h1>
+        <p class="lede">Projects across Kompally and North Hyderabad, with sizes, photos, videos and possession details on every listing.</p>
+        <div class="hero-cta">
+          <button class="btn brass" data-jump="projects">Get Started</button>
+          <button class="btn outline" data-jump="contact">Talk to us</button>
+        </div>
+        <div class="stats" id="stats"></div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <section class="cats" aria-label="Property categories">
+        <h2 class="sec-title">What are you looking for?</h2>
+        <div class="cat-grid" id="cat-grid"></div>
+      </section>
+
+      <h2 class="sec-title" id="projects">Our projects</h2>
+      <div class="filters" role="search">
+        <div class="tabs" id="type-tabs" aria-label="Filter by property type"></div>
+        <div class="filter-row">
+          <div class="field">
+            <label for="q">Search</label>
+            <input id="q" type="search" placeholder="Project, builder or locality">
+          </div>
+          <div class="field">
+            <label for="f-loc">Locality</label>
+            <select id="f-loc"><option value="">All localities</option></select>
+          </div>
+          <div class="field">
+            <label for="f-budget">Budget (starting price)</label>
+            <select id="f-budget">
+              <option value="">Any budget</option>
+              <option value="0-5000000">Under ₹50 L</option>
+              <option value="5000000-10000000">₹50 L – ₹1 Cr</option>
+              <option value="10000000-20000000">₹1 Cr – ₹2 Cr</option>
+              <option value="20000000-">Above ₹2 Cr</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-status">Status</label>
+            <select id="f-status">
+              <option value="">Any status</option>
+              <option>Ready to move</option>
+              <option>Under construction</option>
+              <option>New launch</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-sort">Sort by</label>
+            <select id="f-sort">
+              <option value="featured">Featured</option>
+              <option value="rate-asc">Rate per sq.ft: low to high</option>
+              <option value="rate-desc">Rate per sq.ft: high to low</option>
+              <option value="price-asc">Starting price: low to high</option>
+              <option value="area-desc">Largest area first</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-bar">
+        <p id="result-count" class="num"></p>
+        <button class="link-btn" id="clear-filters">Clear filters</button>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <section class="band" id="about">
+      <div class="wrap about">
+        <div>
+          <p class="eyebrow">About SRGP Realty</p>
+          <h2>A Hyderabad real estate company for homes, plots and land</h2>
+          <p>We help families and investors buy with confidence: verified titles, approved layouts and clear pricing, from the first site visit to registration.</p>
+        </div>
+        <div class="features">
+          <div class="feature"><b>Villas and high-rise apartments</b><span>Gated communities in the city's growth corridors, from ready homes to new launches.</span></div>
+          <div class="feature"><b>HMDA and DTCP approved plots</b><span>Open plots in approved layouts with roads, drainage and power laid.</span></div>
+          <div class="feature"><b>Farm land with clear titles</b><span>Patta and Pahani verified agricultural land, whole or in parcels.</span></div>
+          <div class="feature"><b>Loans and registration support</b><span>Help with bank loans, documents and registration once you choose a property.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap cta-band">
+      <div>
+        <h2>Want a site visit or the latest price sheet?</h2>
+        <p>Leave your number and our team will call you back.</p>
+      </div>
+      <button class="btn brass" data-jump="contact">Contact now</button>
+    </section>
+
+    <section class="wrap contact" id="contact">
+      <div>
+        <p class="eyebrow">Contact</p>
+        <h2>Talk to SRGP Realty</h2>
+        <dl class="contact-list">
+          <div><dt>Phone</dt><dd id="c-phone"></dd></div>
+          <div><dt>Email</dt><dd id="c-email"></dd></div>
+          <div><dt>Office</dt><dd id="c-office"></dd></div>
+          <div><dt>Hours</dt><dd>Mon to Sat, 9:30 am to 7 pm</dd></div>
+        </dl>
+      </div>
+      <form class="enq panel" id="contact-form">
+        <div class="field"><label for="cf-name">Name</label><input id="cf-name" required></div>
+        <div class="field"><label for="cf-phone">Phone</label><input id="cf-phone" required inputmode="tel"></div>
+        <div class="field"><label for="cf-type">Interested in</label>
+          <select id="cf-type"><option>Apartment</option><option>Villa</option><option>Open plot</option><option>Farm land</option></select></div>
+        <div class="field"><label for="cf-msg">Message (optional)</label><textarea id="cf-msg" rows="3"></textarea></div>
+        <button class="btn" type="submit">Request a call back</button>
+        <div class="notice hidden" id="cf-done"></div>
+      </form>
+    </section>
+  </section>
+
+  <!-- DETAIL VIEW -->
+  <section id="detail-view" class="hidden">
+    <div class="wrap detail" id="detail"></div>
+  </section>
+</main>
+
+<div class="lightbox hidden" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb-btn lb-close" id="lb-close" aria-label="Close">✕</button>
+  <button class="lb-btn lb-prev" id="lb-prev" aria-label="Previous photo">‹</button>
+  <figure><img id="lb-img" alt=""><figcaption id="lb-cap" class="num"></figcaption></figure>
+  <button class="lb-btn lb-next" id="lb-next" aria-label="Next photo">›</button>
+</div>
+<footer>
+  <div class="wrap foot">
+    <div><img class="foot-logo" src="images/logo.jpg" alt="SRGP Realty logo" width="88" height="88" loading="lazy"><b class="foot-brand">SRGP Realty</b><p>Apartments, villas, open plots and farm land across Hyderabad.</p></div>
+    <div><b>Properties</b><button data-nav="apartment">Apartments</button><button data-nav="villa">Villas</button><button data-nav="plot">Open Plots</button><button data-nav="land">Farm Land</button></div>
+    <div><b>Company</b><button data-jump="about">About us</button><button data-jump="contact">Contact us</button></div>
+  </div>
+  <div class="wrap foot-note">© 2026 SRGP Realty. Project images are artist's impressions from the builders' brochures. Prices, sizes and availability are subject to change; please confirm with us before booking.</div>
+</footer>
+
+<script>
+/* =====================================================================
+   LISTINGS — edit this array to add, change or remove projects.
+   type: "apartment" | "villa" | "plot" | "land"
+   ratePerSft: price per square foot in ₹
+   units: each unit type with its area in sq.ft (for land, area in sq.ft too; 1 acre = 43,560 sq.ft)
+   ===================================================================== */
+const LISTINGS = [
+  {
+    id:"north-crest-kompally", name:"North Crest", type:"apartment", builder:"Sri Venkateshwara Developers",
+    locality:"Kompally", city:"Hyderabad", ratePerSft:6299, status:"Ready to move", possession:"Ready to move",
+    rera:"TG RERA P02200007136", landArea:"2.65 acres", totalUnits:160, towers:"2 towers, Basement + Stilt + 10 floors", facing:"East & West",
+    address:"Survey No. 41/1 & 48, Gundlapochampally Village, Kompally, Medchal–Malkajgiri District, Hyderabad",
+    approvals:"HMDA sanctioned · TG RERA registered · Loans from SBI, HDFC, ICICI",
+    image:"images/north-crest.jpg", videos:[["images/north-crest-promo.mp4","images/north-crest-promo-frame.jpg","Project highlights · 30 sec"],["images/north-crest.mp4","images/north-crest-poster-frame.jpg","Site and flat walkthrough · 1 min"]],
+    gallery:[["images/nc-elevation.jpg","Elevation of both towers"],["images/north-crest.jpg","Aerial view of North Crest"],["images/nc-towers.jpg","Block A and Block B"],["images/nc-terrace-pool.jpg","Terrace pool with seating deck"],["images/nc-landscape.jpg","Landscaped courtyard"],["images/nc-entrance.jpg","Entrance and drop-off"],["images/nc-master-plan.jpg","Master plan"],["images/nc-floor-plan-a.jpg","Block A typical floor plan"],["images/nc-floor-plan-b.jpg","Block B typical floor plan"],["images/nc-location-map.jpg","Location map"],["images/north-crest-poster.jpg","North Crest with SRGP Realty"]],
+    sizesNote:"All flat sizes in the floor plans — Block A: 2,040, 2,665, 2,800, 3,055, 3,210, 3,245 and 3,425 sq.ft. Block B: 1,935, 2,400, 2,515, 3,105, 3,200, 3,255 and 3,380 sq.ft. Ask us for availability and prices of each size.",
+    units:[{label:"Grand Royale 3 BHK",area:2665},{label:"Sky Villa 3.5 BHK with Home Theatre",area:3425}],
+    amenities:["Home theatre (20-seater)","Guest rooms","Double-height reception & lounge","Terrace pool with seating deck","Family swimming pool","Kids' pool","Poolside seating deck","Multipurpose hall","Equipped gym","Indoor badminton court","Multipurpose court","Outdoor sports & activities","Children's play area","Party lawn","Elders' seating zones","Arrival plaza","Seating deck with covered structure"],
+    specs:[
+      ["Structure","RCC framed, earthquake/seismic and wind resistant; clay brick masonry"],
+      ["Plastering","Internal 1 coat, external 2 coats, river/engineered sand and cement"],
+      ["Doors","Teak/engineered wood main door with veneered flush shutter; teak frame internal doors; Godrej/Europa/Dorset hardware; UPVC sliding French door"],
+      ["Windows","UPVC windows with provision for fly-proof shutter; MS grills with enamel finish"],
+      ["Flooring","Living & dining 800×800 mm vitrified; bedrooms & kitchen 600×600 mm vitrified; anti-skid in balconies & baths; granite in corridors & stairs"],
+      ["Tiling","Kitchen dado 2 ft above granite platform; bathrooms to door height; utility up to 3 ft"],
+      ["Kitchen","Granite platform with stainless steel sink; provision for water purifier, exhaust and chimney"],
+      ["Plumbing","Wall-mounted EWC with concealed flush tank; branded sanitary & CP fittings; single-lever wall mixer; geyser provision in all bathrooms"],
+      ["Electrical","Concealed ISI copper wiring; modular switches; AC points in all bedrooms & living; 3-phase supply with individual meter; MCB per room"],
+      ["Painting","External weatherproof paint (Asian or equivalent); internal 2 coats putty, primer and 2 coats premium emulsion"],
+      ["Lifts","High-speed passenger lifts and service lift with V3F drives"],
+      ["Power backup","100% DG backup except 16 A plugs, ACs and geysers"],
+      ["Internet & TV","Cable TV points in master bedroom & living; router provision in living room"],
+      ["Safety & security","24/7 security, CCTV, panic button and intercom in lifts, fire sprinklers in basement and fire alarms"],
+      ["Water & STP","Softened domestic water supply; sewage treatment plant"],
+      ["Parking","2 covered car parks per flat in basement & stilt"],
+      ["Corridors","LED lighting in all corridors"]
+    ],
+    nearby:[["NH-44","2 min"],["ORR","3 min"],["Gundlapochampally MMTS","2 min"],["Geethanjali School","2 min"],["Sri Meru Hospital","2 min"],["St. Ann's School","5 min"],["CMR College","5 min"],["Niraj International School","5 min"],["Renova Hospital","5 min"],["Suraksha Hospital","5 min"],["Apparel Park","5 min"],["Oxygen Park","5 min"],["Cine Planet","5 min"],["Croma","5 min"],["Sadhu Vaswani International School","10 min"],["Medchal Town","10 min"],["Jeedimetla Industrial Area","10 min"],["Decathlon","10 min"],["Mahindra Satyam Tech Park","20 min"],["Mediciti Hospital","25 min"],["Gachibowli / Hitech City","55 min"]],
+    highlights:["3-minute drive to ORR, adjacent to NH-44","Two blocks (A & B), Basement + Stilt + 10 floors","40% open spaces with landscaped courtyards","Vaastu-compliant homes","2 covered car parks per flat","Flat sizes from 1,935 to 3,425 sq.ft","Ready to move in"],
+    description:"A luxury gated community of 160 flats on 2.65 acres, facing Kompally Highway. Spacious 3 and 3.5 BHK premium homes from 2,665 to 3,425 sq.ft, in two towers with basement parking and a stilt breezeway.",
+    featured:0, palette:["#24456b","#a9c1dc"]
+  },
+  {
+    id:"emerald-heights-kompally", name:"Emerald Heights", type:"apartment", builder:"PVR Infra",
+    locality:"Kompally", city:"Hyderabad", ratePerSft:4999, otp:true, status:"Under construction", possession:"2028",
+    rera:"TG RERA P02200010690 (to be confirmed)", landArea:"5.5 acres", totalUnits:"To be confirmed", towers:"4 blocks (A–D) with a clubhouse", facing:"East & West",
+    address:"Survey No. 53 Part, Gundlapochampally Village, Medchal–Malkajgiri District, Hyderabad 500100",
+    approvals:"HMDA sanctioned · TG RERA registered · Loans from major banks",
+    image:"images/emerald-heights.jpg", video:"images/emerald-heights.mp4", videoPoster:"images/emerald-heights-poster-frame.jpg", imagePos:"50% 55%", imagePosCard:"50% 47%",
+    gallery:[["images/eh-aerial.jpg", "Aerial view of Emerald Heights"], ["images/eh-panorama.jpg", "Towers across the open grounds"], ["images/eh-towers.jpg", "Residential towers"], ["images/eh-tower-angle.jpg", "Tower elevation"], ["images/eh-clubhouse.jpg", "Clubhouse and towers"], ["images/eh-clubhouse-street.jpg", "Clubhouse from the road"], ["images/eh-clubhouse-front.jpg", "Clubhouse facade"], ["images/eh-rooftop-pool.jpg", "Rooftop infinity pool"], ["images/eh-pool.jpg", "Swimming pool deck"], ["images/eh-landscape-aerial.jpg", "Landscaped courtyard from above"], ["images/eh-play-area.jpg", "Children's play area"], ["images/eh-tennis.jpg", "Sports court"], ["images/eh-multi-court.jpg", "Multipurpose court"], ["images/eh-cricket.jpg", "Cricket practice nets"], ["images/eh-pergola.jpg", "Pergola walkway"], ["images/eh-walkway.jpg", "Garden walkway"], ["images/eh-typical-floor.jpg", "Typical floor plan, Blocks A–D"], ["images/eh-first-floor.jpg", "First floor plan, Blocks A–D"], ["images/emerald-heights.jpg", "Emerald with SRGP Realty"]],
+    sizesNote:"Sizes are typical-floor areas read from the architect's floor plans; first-floor flats are smaller (about 1,560 to 2,680 sq.ft). Ask us for availability and the exact size of each flat.",
+    units:[{label: "3 BHK · Block D", area: 1799}, {label: "3 BHK · Block D", area: 1808}, {label: "3 BHK · Blocks A & B", area: 1946}, {label: "3 BHK · Blocks A & B", area: 2275}, {label: "3 BHK · Block D", area: 2432}, {label: "3 BHK · Block C", area: 2473}, {label: "3 BHK · Block C", area: 2483}, {label: "3 BHK · Block C", area: 2686}, {label: "3 BHK · Block C", area: 2700}, {label: "3 BHK · Block C", area: 2708}, {label: "3 BHK · Block D", area: 2716}, {label: "3 BHK · Block C", area: 2756}, {label: "3 BHK · Blocks A & B", area: 2940}, {label: "3 BHK · Blocks A & B", area: 2950}, {label: "3 BHK · Blocks A & B", area: 3002}, {label: "3 BHK · Block C", area: 3181}],
+    specs:["Natural limestone facade","Vaastu compliant","Wide corridors with dual elevators","Cross-ventilated homes","Smart access control"],
+    nearby:[["NH-44 (Kompally Highway)","Adjacent"],["ORR Exit 6, Kandlakoya","2.7 km"],["ORR Exit 5, Dulapally","3.5 km"],["Gundlapochampally railway station","1.7 km"],["GVK International School","600 m"],["Srimeru Hospital","500 m"],["CMR Institute of Medical Sciences","3.6 km"],["Raichandani Mall","3.8 km"],["DMart Kompally","6.7 km"]],
+    amenities:["Rooftop infinity pool", "Swimming pool deck", "Clubhouse with gym", "Indoor games hall", "Lounge and reception", "AC banquet hall", "40-seat Dolby private cinema", "Indoor badminton court", "Outdoor pickleball / sports court", "Multipurpose court", "Cricket practice nets", "Children's play area", "Snooker & games lounge", "Steam & sauna", "Pergola walkways", "Landscaped courtyards", "Walking & jogging trails", "24/7 security & CCTV", "100% power backup"],
+    highlights:["On Kompally Highway (NH-44)", "4 residential blocks (A–D) with a separate clubhouse", "3 BHK homes from about 1,800 to 3,180 sq.ft on typical floors", "Rooftop infinity pool, cricket nets and multiple sports courts", "Possession in 2028"],
+    description:"High-rise 3 BHK residences on Kompally Highway across four blocks, with a separate clubhouse, rooftop infinity pool, private cinema and a full set of sports courts set in landscaped courtyards. Homes are Vaastu compliant with East and West facings.",
+    featured:0.5, palette:["#2f6b8f","#a8d0e6"]
+  },
+  {
+    id:"delight-heights-kompally", name:"Vistara's Delight Heights", type:"apartment", builder:"Vistara Projects",
+    locality:"Kompally", city:"Hyderabad", ratePerSft:null, status:"Ready to move", possession:"Ready",
+    rera:"TG RERA P02200002790", landArea:"1.26 acres", totalUnits:100, towers:"1 building, 18 flats per floor", facing:"NH-44 facing",
+    address:"Survey No. 241, Aswini Colony, Kompally, Hyderabad",
+    approvals:"HMDA approved · TG RERA registered",
+    image:"images/delight-heights.jpg",
+    gallery:[["images/vd-elevation.jpg", "Delight Heights elevation"], ["images/vd-aerial.jpg", "Aerial view"], ["images/vd-entrance.jpg", "Grand entrance with security post"], ["images/vd-walkway.jpg", "Entrance walkway"], ["images/vd-lobby.jpg", "Stilt-level lobby"], ["images/vd-garden-1.jpg", "Garden and kids' play area"], ["images/vd-garden-2.jpg", "Landscaping and basement ramp"], ["images/vd-floor-plan.jpg", "Typical floor plan with flat sizes"], ["images/delight-heights-poster.jpg", "Delight Heights with SRGP Realty"]],
+    specs:[["Structure", "RCC framed structure; fly ash / red brick / CC block masonry"], ["Flooring", "Vitrified tiles with skirting in drawing, living/dining and bedrooms; ceramic tiles in toilets, balconies and utility"], ["Doors", "Solid wood / MDF main door with teak veneer finish; laminated flush internal doors; chrome/SS hardware"], ["Windows", "Aluminium / UPVC windows"], ["Kitchen", "Granite counter with 2 ft ceramic dado and SS sink"], ["Toilets", "Hindware/Parryware or equivalent WCs and basins; Jaquar or equivalent fittings"], ["Electrical", "Concealed Finolex or equivalent copper wiring; Anchor Roma or equivalent switches"], ["Wall finishes", "Smooth interior walls with oil-bound distemper; cement-based exterior paint"], ["Power backup", "Lifts and common areas; light and fan in every room (10 points for 3 BHK, 8 for 2 BHK)"], ["Communications", "Telephone and internet points in living and master bedroom; cable TV in living and all bedrooms"], ["Common services", "Backup for street lighting, STP, water supply and lifts; underground cabling"], ["Security", "24/7 security; guard house with intercom to every flat"], ["Eco-friendly", "Sewage treatment plant, rainwater harvesting and water softener"]],
+    nearby:[["MMTS station, Gundlapochampally", "5 min"], ["NH-44 (Medchal Road)", "5 min"], ["Sivasivani Public School", "5 min"], ["St. Martin's Engineering College", "5 min"], ["ORR", "10 min"], ["Suchitra Junction", "10 min"], ["CMR Engineering College", "10 min"], ["DRS International School", "10 min"], ["Mahindra Satyam Training Centre", "10 min"], ["Cine Planet multiplex", "10 min"], ["Medchal Town", "15 min"], ["Malla Reddy Medical College", "15 min"], ["Narayana Hrudayalaya", "15 min"], ["Usha Mullapudi Cardiac Centre", "30 min"]],
+    sizesNote:"Sizes are super built-up areas from the brochure's floor plan; carpet areas range from 859 to 1,256 sq.ft.",
+    units:[{label: "2 BHK", area: 1240}, {label: "2 BHK", area: 1255}, {label: "2 BHK", area: 1265}, {label: "2 BHK", area: 1400}, {label: "3 BHK", area: 1550}, {label: "3 BHK", area: 1700}, {label: "3 BHK", area: 1740}, {label: "3 BHK", area: 1770}, {label: "3 BHK", area: 1800}, {label: "3 BHK", area: 1805}, {label: "3 BHK", area: 1850}, {label: "3 BHK", area: 1865}],
+    amenities:["Clubhouse", "Gym", "Multipurpose hall", "Kids' play area", "Landscaped gardens", "Grand entrance with security post", "24-hour water", "Rainwater harvesting", "Sewage treatment plant", "CCTV surveillance", "24/7 security"],
+    highlights:["2 and 3 BHK homes from 1,240 to 1,865 sq.ft", "Only 100 homes on 1.26 acres, facing NH-44", "No common walls between flats, with excellent ventilation", "Vaastu-compliant design", "Water softener, rainwater harvesting and STP"],
+    description:"A boutique gated community of 100 homes on 1.26 acres by Vistara Projects in Kompally. Spacious 2 and 3 BHK homes with no common walls, a clubhouse, gym and multipurpose hall, landscaped gardens and a grand entrance with security post.",
+    featured:0.6, palette:["#1f5a34","#a9d3a0"]
+  },
+  {
+    id:"dhatri-county-2-kompally", name:"Dhatri County-II", type:"villa", sqyd:true, builder:"Tridhatri Infra Developers (Sarvagna Projects)",
+    locality:"Kompally", city:"Hyderabad", ratePerSft:null, status:"New launch", possession:"Contact for details",
+    rera:"TG RERA P02200010715", landArea:"18 acres", totalUnits:273, towers:"Villa plots, HMDA approved layout", facing:"East & West",
+    address:"Railapur, Kompally, near the Hyderabad–Medchal Highway (NH-44)",
+    approvals:"HMDA layout permission LP No. 0922/HMDA/SWDL/2025 dated 01/11/2025 · TG RERA registered · Bank loan facility",
+    image:"images/dhatri-county-2.jpg", video:"images/dhatri-county-2.mp4", videoPoster:"images/dhatri-county-2-poster.jpg",
+    gallery:[["images/dhatri-county-2.jpg","Aerial view of the layout"],["images/dhatri-entrance.jpg","Grand entrance arch"],["images/dhatri-clubhouse.jpg","Clubhouse"],["images/dhatri-pool.jpg","Clubhouse swimming pool"],["images/dhatri-clubhouse-front.jpg","Clubhouse entrance"],["images/dhatri-avenue.jpg","Tree-lined avenue roads"],["images/dhatri-internal-road.jpg","Internal CC roads"],["images/dhatri-plaza.jpg","Arrival plaza"],["images/dhatri-garden.jpg","Landscaped garden"],["images/dhatri-pergola.jpg","Pergola walkway"],["images/dhatri-sculpture.jpg","Garden pergola and sculpture"]],
+    units:[{label:"Villa plot 150 sq.yd",area:1350},{label:"Villa plot 167 sq.yd",area:1503},{label:"Villa plot 200 sq.yd",area:1800}],
+    amenities:["Clubhouse","Swimming pool","Indoor gym","Indoor sports","Meditation centre","Bonfire area","Jogging track","Children's playground","Parks"],
+    specs:["Grand entrance arch","Compound wall around the layout","40 ft and 30 ft wide CC roads","Layout facing a 150 ft road","Underground electricity","Underground drainage","Overhead tank","Designer pavements","Avenue plantation","24×7 security","100% Vastu compliant"],
+    nearby:[["Outer Ring Road junction","5 min drive"],["Medchal bus stand (NH-44)","Nearby"],["MMTS: Medchal & Gowdavalli","Nearby"],["Kandlakoya IT Park","Nearby"],["Kompally X Road","Nearby"],["Pallavi International School","Nearby"],["CMR Engineering College","Nearby"],["Narayana Hrudayalaya","Nearby"],["Cine Planet multiplex","Nearby"]],
+    highlights:["Premium villa plots: buy a plot and build your own villa","273 plots on 18 acres","Kompally now under GHMC limits","Proposed metro up to Medchal"],
+    description:"An 18-acre gated layout of premium villa plots at Railapur, near the Medchal Highway close to Kompally. Tree-lined avenues, a series of parks and a clubhouse, with the option to construct your own villa.",
+    featured:0.7, palette:["#6b2a3a","#e3b7c0"]
+  },
+  {
+    id:"suvarna-enclave-rampally", name:"Suvarna Enclave", type:"plot", builder:"Marketed by SRGP Realty",
+    locality:"Rampally, Keesara", city:"Hyderabad", ratePerSft:null, status:"Under construction", possession:"Contact for details",
+    rera:"Approval details on request", landArea:"About 16,365 sq.yd in plots", totalUnits:86, towers:"Draft layout, approval details on request", facing:"Contact for details",
+    address:"Rampally Village, Keesara, Medchal–Malkajgiri District, Telangana",
+    approvals:"Draft layout · ask us for the latest approval status",
+    image:"images/suvarna-impression.jpg",
+    videos:[["images/suvarna.mp4","images/suvarna-poster-frame.jpg","Site development · 34 sec"]],
+    gallery:[["images/suvarna-impression.jpg","Artist's impression of the setting"],["images/suvarna-site-plan.jpg","Draft site plan with plot numbers"]],
+    sizesNote:"86 plots from 149.94 to 496.91 sq.yd in the draft plot schedule; most plots are 166.67 sq.yd. Open the site plan photo to see every plot's position, and ask us for availability.",
+    units:[{label:"Plot 150 sq.yd · 6 plots",area:1350},{label:"Plot 166.67 sq.yd · 42 plots",area:1500},{label:"Plot about 175 sq.yd",area:1575},{label:"Plot about 200 sq.yd",area:1800},{label:"Plot 225 sq.yd",area:2025},{label:"Plot 250 sq.yd · 7 plots",area:2250},{label:"Plot 298 sq.yd",area:2683},{label:"Plot 312 sq.yd",area:2807},{label:"Plot about 497 sq.yd · 3 plots",area:4473}],
+    amenities:["30 ft internal roads","CC roads with kerbs","Avenue plantation","1,622.84 m² open space","Existing 30 ft road access","Approach road proposed to widen from 9 m to 30 m"],
+    nearby:[["ECIL","Nearby"],["Ghatkesar","Nearby"],["Keesara","Nearby"]],
+    highlights:["86 open plots in Rampally Village, Keesara","Plot sizes from 150 to about 497 sq.yd","30 ft internal roads with kerbs and avenue plantation","1,622.84 m² set aside as open space","Near ECIL and Ghatkesar"],
+    description:"Open plots in Rampally Village, Keesara, close to ECIL and Ghatkesar. The layout has 86 plots on 30 ft internal roads, with land set aside for open space. Road works, kerbs and avenue planting are under way on site.",
+    featured:0.8, palette:["#5a4a2b","#e6d3a3"]
+  }
+];
+const AGENT = { name:"SRGP Realty", phone:"+91 90592 58889", email:"realtysrgp@gmail.com", office:"Gundlapochampally, Kompally, Telangana 500100" };
+/* GOOGLE SHEET: paste your Apps Script web app URL between the quotes to receive enquiries in your sheet */
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzoN0AIBQeLRJaHljFWhAwv1N3Gg7QA1XqBoBqLz5SSUPvDSE--AXJ2lSLdJDLr_LGIMw/exec";
+/* ===================================================================== */
+
+async function sendEnquiry(data, msgEl, formEl){
+  msgEl.classList.remove("hidden");
+  if(!SHEET_URL){ msgEl.textContent = `Thanks, ${data.name}. Enquiries aren't connected yet on this preview, so please call ${AGENT.phone} for now.`; return; }
+  msgEl.textContent = "Sending…";
+  try{
+    await fetch(SHEET_URL, {method:"POST", mode:"no-cors", body:new URLSearchParams({...data, page:location.href})});
+    msgEl.textContent = `Thanks, ${data.name}. We've received your request and will call you shortly.`;
+    formEl.reset();
+  }catch(err){
+    msgEl.textContent = `Sorry, that didn't send. Please check your internet connection and try again, or call ${AGENT.phone}.`;
+  }
+}
+
+const TYPE_LABEL = {apartment:"Apartment", villa:"Villa", plot:"Open Plot", land:"Farm Land"};
+const TYPE_PLURAL = {apartment:"Apartments", villa:"Villas", plot:"Open Plots", land:"Farm Land"};
+const SQFT_PER_SQYD = 9, SQFT_PER_ACRE = 43560;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function inr(n){ return "₹" + Math.round(n).toLocaleString("en-IN"); }
+function money(n){
+  if(n >= 1e7) return "₹" + (n/1e7).toFixed(n >= 1e8 ? 1 : 2).replace(/\.?0+$/,"") + " Cr";
+  if(n >= 1e5) return "₹" + (n/1e5).toFixed(1).replace(/\.0$/,"") + " L";
+  return inr(n);
+}
+function areaText(sft, type){
+  if(type === "land" && sft >= 21780) return (sft/SQFT_PER_ACRE).toFixed(2).replace(/\.?0+$/,"") + " acres";
+  if(type === "plot") return Math.round(sft/SQFT_PER_SQYD).toLocaleString("en-IN") + " sq.yd";
+  return sft.toLocaleString("en-IN") + " sq.ft";
+}
+const vids = l => l.videos || (l.video ? [[l.video, l.videoPoster||"", ""]] : []);
+const minArea = l => Math.min(...l.units.map(u=>u.area));
+const maxArea = l => Math.max(...l.units.map(u=>u.area));
+const startPrice = l => l.ratePerSft ? minArea(l) * l.ratePerSft : null;
+const ON_REQ = "On request";
+function statusClass(s){ return s === "Ready to move" ? "ready" : s === "New launch" ? "launch" : s === "Under construction" ? "uc" : "neutral"; }
+
+/* ---- illustrations (drawn, so no image files are needed) ---- */
+function art(l, wide){
+  if(l.image) return `<img src="${esc(l.image)}" alt="${esc(l.name)}" style="width:100%;height:100%;object-fit:cover;object-position:${(!wide && l.imagePosCard) || l.imagePos || "62% 50%"};display:block" loading="lazy">`;
+  const [a,b] = l.palette, W = wide ? 840 : 480, H = wide ? 320 : 270;
+  let seed = [...l.id].reduce((s,c)=>s + c.charCodeAt(0), 0);
+  const rnd = () => (seed = (seed*9301 + 49297) % 233280) / 233280;
+  let g = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of ${esc(l.name)}">
+  <defs><linearGradient id="sky-${l.id}${wide?'w':''}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${b}" stop-opacity=".55"/><stop offset="1" stop-color="${b}" stop-opacity=".15"/></linearGradient></defs>
+  <rect width="${W}" height="${H}" fill="url(#sky-${l.id}${wide?'w':''})"/>
+  <circle cx="${W*.82}" cy="${H*.24}" r="${H*.09}" fill="${b}" opacity=".7"/>`;
+  const ground = H*.8;
+  if(l.type === "apartment"){
+    const n = wide ? 7 : 4;
+    for(let i=0;i<n;i++){
+      const w = W/(n+2), x = W*.08 + i*(W*.84/n), h = H*(.35 + rnd()*.38), y = ground - h;
+      g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${a}" opacity="${.75 + i%2*.2}" rx="3"/>`;
+      for(let r=y+12; r<ground-12; r+=16) for(let c=x+8; c<x+w-10; c+=14)
+        g += `<rect x="${c}" y="${r}" width="7" height="8" fill="${b}" opacity="${rnd()>.3?.9:.35}"/>`;
+    }
+  } else if(l.type === "villa"){
+    const n = wide ? 4 : 2;
+    for(let i=0;i<n;i++){
+      const w = W*.8/n*.78, x = W*.1 + i*(W*.8/n), h = H*.32, y = ground - h;
+      g += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${a}" opacity=".88"/>
+        <polygon points="${x-10},${y} ${x+w/2},${y-H*.18} ${x+w+10},${y}" fill="${a}"/>
+        <rect x="${x+w*.4}" y="${ground-h*.5}" width="${w*.2}" height="${h*.5}" fill="${b}"/>
+        <rect x="${x+w*.1}" y="${y+h*.2}" width="${w*.2}" height="${h*.25}" fill="${b}" opacity=".9"/>
+        <rect x="${x+w*.7}" y="${y+h*.2}" width="${w*.2}" height="${h*.25}" fill="${b}" opacity=".9"/>
+        <circle cx="${x+w+W*.03}" cy="${ground-18}" r="18" fill="${a}" opacity=".55"/>`;
+    }
+  } else if(l.type === "plot"){
+    const cols = wide ? 10 : 6, rows = 3, gw = W*.84/cols, gh = H*.15;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const sold = rnd() > .62;
+      g += `<rect x="${W*.08 + c*gw + 3}" y="${H*.32 + r*(gh+8)}" width="${gw-6}" height="${gh}" fill="${sold ? a : b}" opacity="${sold ? .85 : .7}" rx="2"/>`;
+    }
+    g += `<rect x="0" y="${H*.32 + rows*(gh+8)}" width="${W}" height="10" fill="${a}" opacity=".4"/>`;
+  } else {
+    for(let i=0;i<5;i++){
+      const y = H*.45 + i*H*.08;
+      g += `<path d="M0 ${y} Q ${W*.3} ${y - 20 + rnd()*20} ${W*.6} ${y} T ${W} ${y} V ${H} H 0 Z" fill="${a}" opacity="${.25 + i*.13}"/>`;
+    }
+    const t = wide ? 9 : 5;
+    for(let i=0;i<t;i++){ const x = W*.08 + rnd()*W*.84, y = H*.48 + rnd()*H*.1;
+      g += `<rect x="${x-2}" y="${y}" width="4" height="16" fill="${a}"/><circle cx="${x}" cy="${y}" r="${10 + rnd()*6}" fill="${a}" opacity=".9"/>`; }
+  }
+  g += `<rect y="${ground}" width="${W}" height="${H-ground}" fill="${a}" opacity=".25"/></svg>`;
+  return g;
+}
+
+/* ---- shortlist (remembered in this browser only) ---- */
+let shortlist = new Set();
+try { shortlist = new Set(JSON.parse(localStorage.getItem("srgp-shortlist") || "[]")); } catch(e){}
+function saveShortlist(){ try{ localStorage.setItem("srgp-shortlist", JSON.stringify([...shortlist])); }catch(e){} $("#sl-count").textContent = shortlist.size; }
+const heart = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>`;
+
+/* ---- list view ---- */
+const state = { type:"", q:"", loc:"", budget:"", status:"", sort:"featured", shortlistOnly:false };
+
+function buildFilters(){
+  const counts = {"":LISTINGS.length};
+  LISTINGS.forEach(l => counts[l.type] = (counts[l.type]||0) + 1);
+  $("#type-tabs").innerHTML = [["","All"],["apartment","Apartments"],["villa","Villas"],["plot","Open Plots"],["land","Farm Land"]]
+    .map(([v,t]) => `<button class="tab" data-type="${v}" aria-pressed="${state.type===v && !state.shortlistOnly}">${t} <span class="count num">${counts[v]||0}</span></button>`).join("");
+  const locs = [...new Set(LISTINGS.map(l=>l.locality))].sort();
+  const sel = $("#f-loc"); const cur = sel.value;
+  sel.innerHTML = `<option value="">All localities</option>` + locs.map(x=>`<option>${esc(x)}</option>`).join("");
+  sel.value = cur;
+  const rates = LISTINGS.map(l=>l.ratePerSft).filter(Boolean);
+  $("#stats").innerHTML = `
+    <div><b class="num">${LISTINGS.length}</b><span>projects listed</span></div>
+    <div><b class="num">${locs.length}</b><span>localities</span></div>
+    <div><b class="num">${new Set(LISTINGS.map(l=>l.type)).size}</b><span>property types</span></div>`;
+  $("#cat-grid").innerHTML = ["apartment","villa","plot","land"].map(t => {
+    const l = LISTINGS.find(x => x.type === t);
+    return `<button class="cat" data-nav="${t}"><div class="art">${l ? art(l).replaceAll("sky-"+l.id, "sky-cat-"+l.id) : art({id:"cat-"+t, type:t, name:TYPE_PLURAL[t], palette:["#3f6b2a","#a8cf87"]})}</div><div class="t"><b>${TYPE_PLURAL[t]}</b><span>${counts[t] ? counts[t] + " listed →" : "Coming soon"}</span></div></button>`;
+  }).join("");
+}
+
+function filtered(){
+  let r = LISTINGS.filter(l => {
+    if(state.shortlistOnly && !shortlist.has(l.id)) return false;
+    if(state.type && l.type !== state.type) return false;
+    if(state.loc && l.locality !== state.loc) return false;
+    if(state.status && l.status !== state.status) return false;
+    if(state.budget){ const [lo,hi] = state.budget.split("-").map(x => x === "" ? Infinity : +x); const p = startPrice(l); if(p === null || p < lo || p > hi) return false; }
+    if(state.q){ const q = state.q.toLowerCase(); if(![l.name,l.builder,l.locality,TYPE_LABEL[l.type]].join(" ").toLowerCase().includes(q)) return false; }
+    return true;
+  });
+  const s = {
+    featured:(a,b)=>a.featured-b.featured, "rate-asc":(a,b)=>(a.ratePerSft??1e12)-(b.ratePerSft??1e12), "rate-desc":(a,b)=>(b.ratePerSft??-1)-(a.ratePerSft??-1),
+    "price-asc":(a,b)=>(startPrice(a)??1e15)-(startPrice(b)??1e15), "area-desc":(a,b)=>maxArea(b)-maxArea(a)
+  }[state.sort];
+  return r.sort(s);
+}
+
+function renderList(){
+  buildFilters();
+  const items = filtered();
+  const label = state.shortlistOnly ? "in your shortlist" : state.type ? TYPE_PLURAL[state.type].toLowerCase() : "projects";
+  $("#result-count").textContent = `Showing ${items.length} ${items.length === 1 && !state.shortlistOnly && !state.type ? "project" : label}`;
+  $("#grid").innerHTML = items.length ? items.map(card).join("") :
+    `<div class="empty">${state.shortlistOnly ? "Your shortlist is empty. Tap the heart on any project to save it here." : "No projects match these filters. Try a wider budget or another locality."}</div>`;
+}
+
+function card(l){
+  const lo = minArea(l), hi = maxArea(l);
+  return `<article class="card" data-id="${l.id}" tabindex="0" aria-label="${esc(l.name)}, ${TYPE_LABEL[l.type]} in ${esc(l.locality)}">
+    <div class="art">${art(l)}
+      <div class="chips"><span class="chip type">${TYPE_LABEL[l.type]}</span><span class="chip ${statusClass(l.status)}">${l.status}</span>${vids(l).length ? `<span class="chip video">▶ ${vids(l).length > 1 ? vids(l).length + " videos" : "Video"}</span>` : ""}${l.gallery ? `<span class="chip video">${l.gallery.length} photos</span>` : ""}</div>
+      <button class="save" data-save="${l.id}" aria-pressed="${shortlist.has(l.id)}" aria-label="Save ${esc(l.name)} to shortlist">${heart}</button>
+    </div>
+    <div class="body">
+      <div><h3>${esc(l.name)}</h3><div class="loc">${esc(l.locality)}, ${esc(l.city)} · ${esc(l.builder)}</div></div>
+      <div class="price-line">${l.ratePerSft ? `${l.otp ? "OTP price from" : "Starts at"} <b class="num">${money(startPrice(l))}</b>` : `<b>Price on request</b>`}</div>
+      <div class="facts">
+        <div class="fact"><span>${l.otp ? "OTP rate per sq.ft" : "Rate per sq.ft"}</span><b class="num rate">${l.ratePerSft ? inr(l.ratePerSft) : ON_REQ}</b></div>
+        <div class="fact"><span>Area</span><b class="num">${lo === hi ? areaText(lo,l.sqyd?"plot":l.type) : areaText(lo,l.sqyd?"plot":l.type) + " – " + areaText(hi,l.sqyd?"plot":l.type)}</b></div>
+        <div class="fact"><span>${l.type === "plot" || l.type === "land" ? "Sizes" : "Configurations"}</span><b>${l.units.length === 1 ? esc(l.units[0].label) : esc(l.units[0].label.replace(/ Villa.*$/," Villa")) + " +" + (l.units.length-1)}</b></div>
+        <div class="fact"><span>Possession</span><b>${esc(l.possession)}</b></div>
+      </div>
+    </div>
+  </article>`;
+}
+
+/* ---- detail view ---- */
+function renderDetail(l){
+  const unitRows = l.units.map(u => `<tr>
+      <td>${esc(u.label)}</td>
+      <td class="r num">${u.area.toLocaleString("en-IN")} sq.ft${(l.type==="plot"||l.sqyd) ? ` <span style="color:var(--muted)">(${Math.round(u.area/9)} sq.yd)</span>` : ""}${u.plot ? ` <span style="color:var(--muted)">on ${esc(u.plot)}</span>`:""}</td>
+      <td class="r num"><b>${l.ratePerSft ? money(u.area * l.ratePerSft) : ON_REQ}</b></td></tr>`).join("");
+  const alt = []; const hasRate = !!l.ratePerSft;
+  if(hasRate && l.type === "plot") alt.push(`<span class="num">${inr(l.ratePerSft*SQFT_PER_SQYD)} / sq.yd</span>`);
+  if(hasRate && l.type === "land") alt.push(`<span class="num">${money(l.ratePerSft*SQFT_PER_ACRE)} / acre</span>`, `<span class="num">${inr(l.ratePerSft*SQFT_PER_SQYD)} / sq.yd</span>`);
+
+  $("#detail").innerHTML = `
+    <button class="back" id="back">← All projects</button>
+    <div class="d-hero">${art(l,true)}</div>
+    <div class="d-head">
+      <div>
+        <div class="chips"><span class="chip type" style="border:1px solid var(--line)">${TYPE_LABEL[l.type]}</span><span class="chip ${statusClass(l.status)}">${l.status}</span></div>
+        <h1>${esc(l.name)}</h1>
+        <div class="loc">${esc(l.locality)}, ${esc(l.city)} · by ${esc(l.builder)}</div>
+      </div>
+      <button class="btn ghost" data-save="${l.id}" aria-pressed="${shortlist.has(l.id)}" id="d-save">${shortlist.has(l.id) ? "Saved to shortlist" : "Save to shortlist"}</button>
+    </div>
+
+    <div class="d-layout">
+      <div>
+        <div class="panel">
+          <h2>Key details</h2>
+          <div class="keyfacts">
+            <div class="fact"><span>${l.otp ? "OTP rate per sq.ft" : "Rate per sq.ft"}</span><b class="num rate">${hasRate ? inr(l.ratePerSft) : ON_REQ}</b></div>
+            <div class="fact"><span>Area range</span><b class="num">${areaText(minArea(l),l.sqyd?"plot":l.type)}${minArea(l)!==maxArea(l) ? " – " + areaText(maxArea(l),l.sqyd?"plot":l.type) : ""}</b></div>
+            <div class="fact"><span>Price range</span><b class="num">${!hasRate ? ON_REQ : money(startPrice(l)) + (minArea(l)!==maxArea(l) ? " – " + money(maxArea(l)*l.ratePerSft) : "")}</b></div>
+            <div class="fact"><span>Possession</span><b>${esc(l.possession)}</b></div>
+            <div class="fact"><span>Project land</span><b>${esc(l.landArea)}</b></div>
+            <div class="fact"><span>${l.type==="land" ? "Parcels" : l.type==="plot" ? "Total plots" : "Total units"}</span><b class="num">${typeof l.totalUnits === "number" ? l.totalUnits.toLocaleString("en-IN") : esc(l.totalUnits)}</b></div>
+            <div class="fact"><span>${l.type==="plot"||l.type==="land" ? "Approval / zoning" : "Structure"}</span><b>${esc(l.towers)}</b></div>
+            <div class="fact"><span>Facing</span><b>${esc(l.facing)}</b></div>
+            <div class="fact"><span>RERA</span><b>${esc(l.rera)}</b></div>
+          </div>
+        </div>
+        ${l.otp ? `<div class="panel otp"><h2>One Time Purchase (OTP) offer</h2>
+          <div class="otp-row"><div><span class="note">OTP rate</span><div class="rate-big num">${inr(l.ratePerSft)} <small>per sq.ft</small></div></div>
+          <div><span class="note">OTP price from</span><div class="rate-big num">${money(startPrice(l))}</div><span class="note num">for ${areaText(minArea(l),"apartment")}</span></div></div>
+          <p class="note" style="margin-top:10px">The prices in the table below are at the OTP rate. Call ${esc(AGENT.phone)} to know the OTP terms and current availability.</p></div>` : ""}
+        ${l.gallery ? `<div class="panel"><h2>Photos <span class="note num" style="font-family:var(--font-body);font-weight:500">${l.gallery.length}</span></h2>
+          <div class="gallery">${l.gallery.map(([src,cap],i)=>`<button class="g-item" data-g="${i}" aria-label="Open photo: ${esc(cap)}"><img src="${esc(src)}" alt="${esc(cap)}" loading="lazy"></button>`).join("")}</div>
+          <p class="note" style="margin-top:8px">Artist's impressions from the project brochure.</p></div>` : ""}
+        ${vids(l).length ? `<div class="panel"><h2>${vids(l).length > 1 ? "Project videos" : "Project video"}</h2>
+          <div class="vid-grid${vids(l).length > 1 ? " two" : ""}">${vids(l).map(([src,poster,title]) => `<figure class="vid">
+            <video controls playsinline preload="metadata" poster="${esc(poster)}" aria-label="${esc(title || "Video of " + l.name)}"><source src="${esc(src)}" type="video/mp4"></video>
+            ${title ? `<figcaption>${esc(title)}</figcaption>` : ""}</figure>`).join("")}</div></div>` : ""}
+        <div class="panel"><h2>About this project</h2><p class="desc">${esc(l.description)}</p>
+          <ul class="hl" style="margin-top:12px">${l.highlights.map(h=>`<li>${esc(h)}</li>`).join("")}</ul></div>
+        <div class="panel">
+          <h2>${l.type==="plot"||l.type==="land" ? "Available sizes and prices" : "Unit types and prices"}</h2>
+          <div class="table-wrap"><table>
+            <thead><tr><th>${l.type==="plot"||l.type==="land" ? "Size" : "Type"}</th><th class="r">Area</th><th class="r">Base price</th></tr></thead>
+            <tbody>${unitRows}</tbody></table></div>
+          <p class="note" style="margin-top:10px">${hasRate ? (l.otp ? `OTP price = area × ${inr(l.ratePerSft)} per sq.ft (One Time Purchase rate).` : `Base price = area × ${inr(l.ratePerSft)} per sq.ft.`) : "Prices are shared on request."} Registration, GST, parking and other charges are extra.</p>
+          ${l.sizesNote ? `<p class="note" style="margin-top:6px">${esc(l.sizesNote)}</p>` : ""}
+        </div>
+        <div class="panel"><h2>${l.type==="land" ? "Features" : "Amenities"}</h2>
+          <ul class="amen">${l.amenities.map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div>
+        ${l.specs ? `<div class="panel"><h2>Specifications</h2>${Array.isArray(l.specs[0]) ? `<dl class="specs">${l.specs.map(([k,v])=>`<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>` : `<ul class="hl">${l.specs.map(s=>`<li>${esc(s)}</li>`).join("")}</ul>`}</div>` : ""}
+        ${l.address || l.nearby ? `<div class="panel"><h2>Location and connectivity</h2>
+          ${l.address ? `<p class="desc">${esc(l.address)}</p>` : ""}
+          ${l.approvals ? `<p class="note" style="margin-top:8px">${esc(l.approvals)}</p>` : ""}
+          ${l.nearby ? `<div class="table-wrap" style="margin-top:12px"><table><tbody>${l.nearby.map(([p,d])=>`<tr><td>${esc(p)}</td><td class="r num">${esc(d)}</td></tr>`).join("")}</tbody></table></div>` : ""}
+        </div>` : ""}
+      </div>
+
+      <aside class="side">
+${hasRate ? `        <div class="panel">
+          ${l.otp ? `<p class="eyebrow" style="margin:0 0 6px">One Time Purchase (OTP)</p>` : ""}<div class="rate-big num">${inr(l.ratePerSft)} <small>per sq.ft</small></div>
+          ${alt.length ? `<div class="alt-rates">${alt.join("")}</div>` : ""}
+          <div class="range calc">
+            <div class="field"><label for="c-unit">Choose ${l.type==="plot"||l.type==="land" ? "a size" : "a unit"}</label>
+              <select id="c-unit">${l.units.map((u,i)=>`<option value="${i}">${esc(u.label)} · ${areaText(u.area,l.sqyd?"plot":l.type)}</option>`).join("")}</select></div>
+            <div class="row"><span>Estimated base price</span><b class="total num" id="c-total"></b></div>
+            <div class="row"><span>Down payment <b id="c-dp-v" class="num">20%</b></span></div>
+            <input type="range" id="c-dp" min="10" max="90" step="5" value="20" aria-label="Down payment percentage">
+            <div class="row"><span>Loan tenure <b id="c-yr-v" class="num">20 yrs</b></span><span>Interest <b class="num">8.5%</b></span></div>
+            <input type="range" id="c-yr" min="5" max="30" step="1" value="20" aria-label="Loan tenure in years">
+            <div class="emi"><span>Estimated EMI<br><span class="note" id="c-loan"></span></span><b class="num" id="c-emi"></b></div>
+          </div>
+        </div>
+` : `        <div class="panel"><div class="rate-big">Price on request</div><p class="note" style="margin-top:8px">Call ${esc(AGENT.phone)} or use the form below for the latest price sheet.</p></div>
+`}
+        <div class="panel">
+          <h2>Ask about ${esc(l.name)}</h2>
+          <form class="enq" id="enq">
+            <input id="e-name" required placeholder="Your name" aria-label="Your name">
+            <input id="e-phone" required inputmode="tel" placeholder="Phone number" aria-label="Phone number">
+            <select id="e-want" aria-label="What would you like"><option>Schedule a site visit</option><option>Get the price sheet</option><option>Talk about a home loan</option></select>
+            <button class="btn" type="submit">Request a call back</button>
+          </form>
+          <div class="notice hidden" id="enq-msg"></div>
+          <p class="note" style="margin-top:10px">Or call ${esc(AGENT.phone)} · ${esc(AGENT.email)}</p>
+        </div>
+      </aside>
+    </div>`;
+
+  const upd = () => {
+    const u = l.units[+$("#c-unit").value], total = u.area * l.ratePerSft;
+    const dp = +$("#c-dp").value, yrs = +$("#c-yr").value, loan = total * (1 - dp/100);
+    const r = 0.085/12, n = yrs*12, emi = loan * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+    $("#c-total").textContent = money(total);
+    $("#c-dp-v").textContent = dp + "%"; $("#c-yr-v").textContent = yrs + " yrs";
+    $("#c-loan").textContent = "on a loan of " + money(loan);
+    $("#c-emi").textContent = inr(emi) + "/mo";
+  };
+  if(hasRate){ ["#c-unit","#c-dp","#c-yr"].forEach(s => $(s).addEventListener("input", upd)); upd(); }
+  $("#back").onclick = () => { location.hash = ""; };
+  $("#enq").addEventListener("submit", e => {
+    e.preventDefault();
+    sendEnquiry({source:"Project page", project:l.name, name:$("#e-name").value, phone:$("#e-phone").value, request:$("#e-want").value, message:""}, $("#enq-msg"), $("#enq"));
+  });
+}
+
+/* ---- routing on #p-<id> ---- */
+function route(){
+  const h = location.hash.slice(1);
+  const l = h.startsWith("p-") && LISTINGS.find(x => x.id === h.slice(2));
+  $("#list-view").classList.toggle("hidden", !!l);
+  $("#detail-view").classList.toggle("hidden", !l);
+  if(l){ renderDetail(l); window.scrollTo(0,0); } else renderList();
+}
+
+/* ---- events ---- */
+document.addEventListener("click", e => {
+  const save = e.target.closest("[data-save]");
+  if(save){ e.stopPropagation(); const id = save.dataset.save;
+    shortlist.has(id) ? shortlist.delete(id) : shortlist.add(id); saveShortlist();
+    document.querySelectorAll(`[data-save="${id}"]`).forEach(b => b.setAttribute("aria-pressed", shortlist.has(id)));
+    const ds = $("#d-save"); if(ds) ds.textContent = shortlist.has(id) ? "Saved to shortlist" : "Save to shortlist";
+    if(state.shortlistOnly && !location.hash) renderList();
+    return; }
+  const tab = e.target.closest(".tab");
+  if(tab){ state.type = tab.dataset.type; state.shortlistOnly = false; renderList(); return; }
+  const nav = e.target.closest("[data-nav]");
+  if(nav){ state.type = nav.dataset.nav; state.shortlistOnly = false; location.hash = ""; renderList(); document.getElementById("projects").scrollIntoView({behavior:"smooth"}); return; }
+  const jump = e.target.closest("[data-jump]");
+  if(jump){ const id = jump.dataset.jump; if(location.hash){ location.hash = ""; } setTimeout(() => document.getElementById(id).scrollIntoView({behavior:"smooth"}), 30); return; }
+  const c = e.target.closest(".card");
+  if(c){ location.hash = "p-" + c.dataset.id; }
+});
+document.addEventListener("keydown", e => { const c = e.target.closest && e.target.closest(".card"); if(c && (e.key === "Enter" || e.key === " ") && !e.target.closest("[data-save]")){ e.preventDefault(); location.hash = "p-" + c.dataset.id; } });
+$("#shortlist-nav").onclick = () => { state.shortlistOnly = true; state.type = ""; location.hash = ""; renderList(); };
+$("#home-link").onclick = e => { e.preventDefault(); location.hash = ""; state.shortlistOnly = false; route(); };
+$("#q").addEventListener("input", e => { state.q = e.target.value.trim(); renderList(); });
+$("#f-loc").addEventListener("change", e => { state.loc = e.target.value; renderList(); });
+$("#f-budget").addEventListener("change", e => { state.budget = e.target.value; renderList(); });
+$("#f-status").addEventListener("change", e => { state.status = e.target.value; renderList(); });
+$("#f-sort").addEventListener("change", e => { state.sort = e.target.value; renderList(); });
+$("#clear-filters").onclick = () => {
+  Object.assign(state, {type:"",q:"",loc:"",budget:"",status:"",sort:"featured",shortlistOnly:false});
+  ["#q","#f-loc","#f-budget","#f-status"].forEach(s => $(s).value = ""); $("#f-sort").value = "featured"; renderList();
+};
+/* ---- photo viewer ---- */
+let lbList = [], lbIdx = 0, lbReturn = null;
+function lbShow(){ const [src,cap] = lbList[lbIdx]; $("#lb-img").src = src; $("#lb-img").alt = cap; $("#lb-cap").textContent = `${cap} · ${lbIdx+1} of ${lbList.length}`; }
+function lbOpen(list, i, from){ lbList = list; lbIdx = i; lbReturn = from; lbShow(); $("#lightbox").classList.remove("hidden"); $("#lb-close").focus(); }
+function lbClose(){ $("#lightbox").classList.add("hidden"); if(lbReturn) lbReturn.focus(); }
+const lbStep = d => { lbIdx = (lbIdx + d + lbList.length) % lbList.length; lbShow(); };
+$("#lb-close").onclick = lbClose; $("#lb-prev").onclick = () => lbStep(-1); $("#lb-next").onclick = () => lbStep(1);
+$("#lightbox").addEventListener("click", e => { if(e.target.id === "lightbox") lbClose(); });
+document.addEventListener("keydown", e => { if($("#lightbox").classList.contains("hidden")) return;
+  if(e.key === "Escape") lbClose(); else if(e.key === "ArrowLeft") lbStep(-1); else if(e.key === "ArrowRight") lbStep(1); });
+document.addEventListener("click", e => { const g = e.target.closest(".g-item"); if(!g) return;
+  const l = LISTINGS.find(x => "p-" + x.id === location.hash.slice(1)); if(l) lbOpen(l.gallery, +g.dataset.g, g); });
+window.addEventListener("hashchange", () => { if(!$("#lightbox").classList.contains("hidden")) lbClose(); });
+window.addEventListener("hashchange", route);
+/* Homepage banner photos: [image, caption, project id] — edit to change the slideshow */
+const HERO_SLIDES = [
+  ["images/dhatri-pool.jpg","Dhatri County-II · Clubhouse pool","dhatri-county-2-kompally"],
+  ["images/dhatri-entrance.jpg","Dhatri County-II · Entrance arch","dhatri-county-2-kompally"],
+  ["images/north-crest.jpg","North Crest · Kompally","north-crest-kompally"],
+  ["images/dhatri-avenue.jpg","Dhatri County-II · Avenue roads","dhatri-county-2-kompally"]
+];
+$("#hero-art").innerHTML = HERO_SLIDES.map(([src],i)=>`<img class="slide${i?"":" on"}" src="${src}" alt="" ${i?'loading="lazy"':""}>`).join("");
+let heroIdx = 0;
+const heroCap = () => { $("#hero-caption").textContent = HERO_SLIDES[heroIdx][1]; };
+heroCap();
+if(!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(() => {
+  const s = document.querySelectorAll("#hero-art .slide"); s[heroIdx].classList.remove("on");
+  heroIdx = (heroIdx + 1) % s.length; s[heroIdx].classList.add("on"); heroCap();
+}, 5000);
+$("#c-phone").textContent = AGENT.phone; $("#c-email").textContent = AGENT.email; $("#c-office").textContent = AGENT.office;
+$("#contact-form").addEventListener("submit", e => { e.preventDefault();
+  sendEnquiry({source:"Contact form", project:"", name:$("#cf-name").value, phone:$("#cf-phone").value, request:"Interested in " + $("#cf-type").value, message:$("#cf-msg").value}, $("#cf-done"), $("#contact-form")); });
+saveShortlist(); route();
+</script>
+</body>
+</html>
