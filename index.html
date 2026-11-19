@@ -289,6 +289,8 @@ footer{border-top:1px solid var(--line);padding:30px 0 20px;color:var(--muted);f
   .specs{grid-template-columns:1fr}
   .vid-grid.two{grid-template-columns:1fr}
 }
+.d-hero.whole{aspect-ratio:auto;background:#f3e3c9;display:flex;justify-content:center}
+.d-hero.whole img{position:static;width:auto;max-width:100%;max-height:520px;height:auto;display:block;object-fit:contain}
 </style>
 </head>
 <body>
@@ -322,7 +324,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 20px;color:var(--muted);f
       <div class="wrap hero-inner">
         <p class="eyebrow">Apartments · Villas · Open Plots · Farm Land</p>
         <h1>Find your next home or plot in Hyderabad</h1>
-        <p class="lede">Projects across Kompally and North Hyderabad, with sizes, photos, videos and possession details on every listing.</p>
+        <p class="lede">Projects in and around Hyderabad, with sizes, photos, videos and possession details on every listing.</p>
         <div class="hero-cta">
           <button class="btn brass" data-jump="projects">Get Started</button>
           <button class="btn outline" data-jump="contact">Talk to us</button>
@@ -505,7 +507,7 @@ const LISTINGS = [
     rera:"TG RERA P02200010690 (to be confirmed)", landArea:"5.5 acres", totalUnits:"To be confirmed", towers:"4 blocks (A–D) with a clubhouse", facing:"East & West",
     address:"Survey No. 53 Part, Gundlapochampally Village, Medchal–Malkajgiri District, Hyderabad 500100",
     approvals:"HMDA sanctioned · TG RERA registered · Loans from major banks",
-    image:"images/emerald-heights.jpg", video:"images/emerald-heights.mp4", videoPoster:"images/emerald-heights-poster-frame.jpg", imagePos:"50% 55%", imagePosCard:"50% 47%",
+    image:"images/emerald-heights.jpg", videos:[["images/emerald-heights-site-update.mp4","images/emerald-heights-site-update-frame.jpg","Site update, November 2026 · 2.5 min"],["images/emerald-heights.mp4","images/emerald-heights-poster-frame.jpg","Site walkthrough · 2 min"]], imagePos:"50% 55%", imagePosCard:"50% 47%",
     gallery:[["images/eh-aerial.jpg", "Aerial view of Emerald Heights"], ["images/eh-panorama.jpg", "Towers across the open grounds"], ["images/eh-towers.jpg", "Residential towers"], ["images/eh-tower-angle.jpg", "Tower elevation"], ["images/eh-clubhouse.jpg", "Clubhouse and towers"], ["images/eh-clubhouse-street.jpg", "Clubhouse from the road"], ["images/eh-clubhouse-front.jpg", "Clubhouse facade"], ["images/eh-rooftop-pool.jpg", "Rooftop infinity pool"], ["images/eh-pool.jpg", "Swimming pool deck"], ["images/eh-landscape-aerial.jpg", "Landscaped courtyard from above"], ["images/eh-play-area.jpg", "Children's play area"], ["images/eh-tennis.jpg", "Sports court"], ["images/eh-multi-court.jpg", "Multipurpose court"], ["images/eh-cricket.jpg", "Cricket practice nets"], ["images/eh-pergola.jpg", "Pergola walkway"], ["images/eh-walkway.jpg", "Garden walkway"], ["images/eh-typical-floor.jpg", "Typical floor plan, Blocks A–D"], ["images/eh-first-floor.jpg", "First floor plan, Blocks A–D"], ["images/emerald-heights.jpg", "Emerald with SRGP Realty"]],
     sizesNote:"Sizes are typical-floor areas read from the architect's floor plans; first-floor flats are smaller (about 1,560 to 2,680 sq.ft). Ask us for availability and the exact size of each flat.",
     units:[{label: "3 BHK · Block D", area: 1799}, {label: "3 BHK · Block D", area: 1808}, {label: "3 BHK · Blocks A & B", area: 1946}, {label: "3 BHK · Blocks A & B", area: 2275}, {label: "3 BHK · Block D", area: 2432}, {label: "3 BHK · Block C", area: 2473}, {label: "3 BHK · Block C", area: 2483}, {label: "3 BHK · Block C", area: 2686}, {label: "3 BHK · Block C", area: 2700}, {label: "3 BHK · Block C", area: 2708}, {label: "3 BHK · Block D", area: 2716}, {label: "3 BHK · Block C", area: 2756}, {label: "3 BHK · Blocks A & B", area: 2940}, {label: "3 BHK · Blocks A & B", area: 2950}, {label: "3 BHK · Blocks A & B", area: 3002}, {label: "3 BHK · Block C", area: 3181}],
@@ -534,6 +536,23 @@ const LISTINGS = [
     featured:0.6, palette:["#1f5a34","#a9d3a0"]
   },
   {
+    id:"nature-orchid-2-bhongir", name:"Nature Orchid II", type:"plot", builder:"Nature Avenues Infra (marketed by Saluja Infra Developers)",
+    locality:"Bhongir", city:"Yadadri Bhuvanagiri", ratePerSft:16999/9, status:"New launch", possession:"Contact for details",
+    rera:"TG RERA P02000010606", landArea:"13 acres", totalUnits:"Contact for details", towers:"HMDA approved layout", facing:"Contact for details",
+    address:"Sy. No. 61/P & 84/P, Bhuvanagiri Village & Mandal, Yadadri Bhuvanagiri District, Telangana 508116",
+    approvals:"HMDA approved · LP No. 000055/LO/Plg/HMDA/2025 · TG RERA P02000010606 · Bank loan facility available",
+    image:"images/nature-orchid-2.jpg", imagePosCard:"50% 50%", heroWhole:true,
+    videos:[["images/nature-orchid-2.mp4","images/nature-orchid-2-video-frame.jpg","Site drive-through · 1.5 min"]],
+    gallery:[["images/nature-orchid-2.jpg","Nature Orchid II, open villa plots at Bhongir town"],["images/nature-orchid-2-layout.jpg","Layout plan with plot numbers"],["images/nature-orchid-2-route-map.jpg","Route map"],["images/nature-orchid-2-poster.jpg","Nature Orchid II with SRGP Realty"]],
+    sizesNote:"Price at ₹16,999 per sq.yd. Plot sizes are approximate, read from the layout plan: most plots are 30 ft wide (about 150 to 180 sq.yd), with larger corner plots up to about 490 sq.yd. Ask us for the exact size and availability of each plot.",
+    units:[{label:"Plot about 150 sq.yd (30' × 45')",area:1350},{label:"Plot about 160 sq.yd (30' × 48')",area:1440},{label:"Plot about 180 sq.yd (30' × 54')",area:1620},{label:"Corner plot about 398 sq.yd",area:3582},{label:"Corner plot about 490 sq.yd",area:4410}],
+    amenities:["Proposed 100 ft road","30 ft internal CC roads","Avenue plantation","Compound wall","Security","Parks","Underground drainage","Overhead water tank","Entrance arch","Underground electricity"],
+    nearby:[["Warangal National Highway (NH-163)","Adjacent"],["Uppal Junction","38 km"],["Hotel Vivera","Nearby"],["Proposed Bhongir Ring Road","Nearby"],["Proposed Regional Ring Road (RRR)","Nearby"],["Bhongir Fort","Nearby"],["Bhongir Town","Nearby"],["Yadagirigutta (Yadadri) Temple","On the route"],["AIIMS Bibinagar","On the route"],["Outer Ring Road","On the route"],["Infosys, Genpact, Singapore Township","On the route"]],
+    highlights:["HMDA approved, TG RERA registered","Spread over 13 acres, 38 km from Uppal Junction","Open villa plots at ₹16,999 per sq.yd","Next to the Warangal Highway (NH-163) in Bhongir town","Near the proposed Bhongir Ring Road and Regional Ring Road","Bank loan facility available"],
+    description:"Open villa plots in an HMDA approved layout at Bhongir town, next to the Warangal National Highway (NH-163) and near Hotel Vivera. The layout has a proposed 100 ft road, 30 ft internal CC roads, parks, underground drainage and electricity, and an entrance arch.",
+    featured:0.75, palette:["#2f6b2a","#cfe3a3"]
+  },
+  {
     id:"dhatri-county-2-kompally", name:"Dhatri County-II", type:"villa", sqyd:true, builder:"Tridhatri Infra Developers (Sarvagna Projects)",
     locality:"Kompally", city:"Hyderabad", ratePerSft:null, status:"New launch", possession:"Contact for details",
     rera:"TG RERA P02200010715", landArea:"18 acres", totalUnits:273, towers:"Villa plots, HMDA approved layout", facing:"East & West",
@@ -548,23 +567,6 @@ const LISTINGS = [
     highlights:["Premium villa plots: buy a plot and build your own villa","273 plots on 18 acres","Kompally now under GHMC limits","Proposed metro up to Medchal"],
     description:"An 18-acre gated layout of premium villa plots at Railapur, near the Medchal Highway close to Kompally. Tree-lined avenues, a series of parks and a clubhouse, with the option to construct your own villa.",
     featured:0.7, palette:["#6b2a3a","#e3b7c0"]
-  },
-  {
-    id:"suvarna-enclave-rampally", name:"Suvarna Enclave", type:"plot", builder:"Marketed by SRGP Realty",
-    locality:"Rampally, Keesara", city:"Hyderabad", ratePerSft:null, status:"Under construction", possession:"Contact for details",
-    rera:"Approval details on request", landArea:"About 16,365 sq.yd in plots", totalUnits:86, towers:"Draft layout, approval details on request", facing:"Contact for details",
-    address:"Rampally Village, Keesara, Medchal–Malkajgiri District, Telangana",
-    approvals:"Draft layout · ask us for the latest approval status",
-    image:"images/suvarna-impression.jpg",
-    videos:[["images/suvarna.mp4","images/suvarna-poster-frame.jpg","Site development · 34 sec"]],
-    gallery:[["images/suvarna-impression.jpg","Artist's impression of the setting"],["images/suvarna-site-plan.jpg","Draft site plan with plot numbers"]],
-    sizesNote:"86 plots from 149.94 to 496.91 sq.yd in the draft plot schedule; most plots are 166.67 sq.yd. Open the site plan photo to see every plot's position, and ask us for availability.",
-    units:[{label:"Plot 150 sq.yd · 6 plots",area:1350},{label:"Plot 166.67 sq.yd · 42 plots",area:1500},{label:"Plot about 175 sq.yd",area:1575},{label:"Plot about 200 sq.yd",area:1800},{label:"Plot 225 sq.yd",area:2025},{label:"Plot 250 sq.yd · 7 plots",area:2250},{label:"Plot 298 sq.yd",area:2683},{label:"Plot 312 sq.yd",area:2807},{label:"Plot about 497 sq.yd · 3 plots",area:4473}],
-    amenities:["30 ft internal roads","CC roads with kerbs","Avenue plantation","1,622.84 m² open space","Existing 30 ft road access","Approach road proposed to widen from 9 m to 30 m"],
-    nearby:[["ECIL","Nearby"],["Ghatkesar","Nearby"],["Keesara","Nearby"]],
-    highlights:["86 open plots in Rampally Village, Keesara","Plot sizes from 150 to about 497 sq.yd","30 ft internal roads with kerbs and avenue plantation","1,622.84 m² set aside as open space","Near ECIL and Ghatkesar"],
-    description:"Open plots in Rampally Village, Keesara, close to ECIL and Ghatkesar. The layout has 86 plots on 30 ft internal roads, with land set aside for open space. Road works, kerbs and avenue planting are under way on site.",
-    featured:0.8, palette:["#5a4a2b","#e6d3a3"]
   }
 ];
 const AGENT = { name:"SRGP Realty", phone:"+91 90592 58889", email:"realtysrgp@gmail.com", office:"Gundlapochampally, Kompally, Telangana 500100" };
@@ -608,6 +610,9 @@ const minArea = l => Math.min(...l.units.map(u=>u.area));
 const maxArea = l => Math.max(...l.units.map(u=>u.area));
 const startPrice = l => l.ratePerSft ? minArea(l) * l.ratePerSft : null;
 const ON_REQ = "On request";
+const byYd = l => l.type === "plot" || l.sqyd;
+const unitName = l => byYd(l) ? "sq.yd" : "sq.ft";
+const rateShown = l => byYd(l) ? l.ratePerSft * SQFT_PER_SQYD : l.ratePerSft;
 function statusClass(s){ return s === "Ready to move" ? "ready" : s === "New launch" ? "launch" : s === "Under construction" ? "uc" : "neutral"; }
 
 /* ---- illustrations (drawn, so no image files are needed) ---- */
@@ -681,7 +686,7 @@ function buildFilters(){
   const rates = LISTINGS.map(l=>l.ratePerSft).filter(Boolean);
   $("#stats").innerHTML = `
     <div><b class="num">${LISTINGS.length}</b><span>projects listed</span></div>
-    <div><b class="num">${locs.length}</b><span>localities</span></div>
+    <div><b class="num">${locs.length}</b><span>${locs.length === 1 ? "locality" : "localities"}</span></div>
     <div><b class="num">${new Set(LISTINGS.map(l=>l.type)).size}</b><span>property types</span></div>`;
   $("#cat-grid").innerHTML = ["apartment","villa","plot","land"].map(t => {
     const l = LISTINGS.find(x => x.type === t);
@@ -726,7 +731,7 @@ function card(l){
       <div><h3>${esc(l.name)}</h3><div class="loc">${esc(l.locality)}, ${esc(l.city)} · ${esc(l.builder)}</div></div>
       <div class="price-line">${l.ratePerSft ? `${l.otp ? "OTP price from" : "Starts at"} <b class="num">${money(startPrice(l))}</b>` : `<b>Price on request</b>`}</div>
       <div class="facts">
-        <div class="fact"><span>${l.otp ? "OTP rate per sq.ft" : "Rate per sq.ft"}</span><b class="num rate">${l.ratePerSft ? inr(l.ratePerSft) : ON_REQ}</b></div>
+        <div class="fact"><span>${l.otp ? "OTP rate" : "Rate"} per ${unitName(l)}</span><b class="num rate">${l.ratePerSft ? inr(rateShown(l)) : ON_REQ}</b></div>
         <div class="fact"><span>Area</span><b class="num">${lo === hi ? areaText(lo,l.sqyd?"plot":l.type) : areaText(lo,l.sqyd?"plot":l.type) + " – " + areaText(hi,l.sqyd?"plot":l.type)}</b></div>
         <div class="fact"><span>${l.type === "plot" || l.type === "land" ? "Sizes" : "Configurations"}</span><b>${l.units.length === 1 ? esc(l.units[0].label) : esc(l.units[0].label.replace(/ Villa.*$/," Villa")) + " +" + (l.units.length-1)}</b></div>
         <div class="fact"><span>Possession</span><b>${esc(l.possession)}</b></div>
@@ -742,12 +747,12 @@ function renderDetail(l){
       <td class="r num">${u.area.toLocaleString("en-IN")} sq.ft${(l.type==="plot"||l.sqyd) ? ` <span style="color:var(--muted)">(${Math.round(u.area/9)} sq.yd)</span>` : ""}${u.plot ? ` <span style="color:var(--muted)">on ${esc(u.plot)}</span>`:""}</td>
       <td class="r num"><b>${l.ratePerSft ? money(u.area * l.ratePerSft) : ON_REQ}</b></td></tr>`).join("");
   const alt = []; const hasRate = !!l.ratePerSft;
-  if(hasRate && l.type === "plot") alt.push(`<span class="num">${inr(l.ratePerSft*SQFT_PER_SQYD)} / sq.yd</span>`);
+  if(hasRate && byYd(l)) alt.push(`<span class="num">${inr(l.ratePerSft)} / sq.ft</span>`);
   if(hasRate && l.type === "land") alt.push(`<span class="num">${money(l.ratePerSft*SQFT_PER_ACRE)} / acre</span>`, `<span class="num">${inr(l.ratePerSft*SQFT_PER_SQYD)} / sq.yd</span>`);
 
   $("#detail").innerHTML = `
     <button class="back" id="back">← All projects</button>
-    <div class="d-hero">${art(l,true)}</div>
+    <div class="d-hero${l.heroWhole ? " whole" : ""}">${l.heroWhole ? `<img src="${esc(l.image)}" alt="${esc(l.name)}">` : art(l,true)}</div>
     <div class="d-head">
       <div>
         <div class="chips"><span class="chip type" style="border:1px solid var(--line)">${TYPE_LABEL[l.type]}</span><span class="chip ${statusClass(l.status)}">${l.status}</span></div>
@@ -762,7 +767,7 @@ function renderDetail(l){
         <div class="panel">
           <h2>Key details</h2>
           <div class="keyfacts">
-            <div class="fact"><span>${l.otp ? "OTP rate per sq.ft" : "Rate per sq.ft"}</span><b class="num rate">${hasRate ? inr(l.ratePerSft) : ON_REQ}</b></div>
+            <div class="fact"><span>${l.otp ? "OTP rate" : "Rate"} per ${unitName(l)}</span><b class="num rate">${hasRate ? inr(rateShown(l)) : ON_REQ}</b></div>
             <div class="fact"><span>Area range</span><b class="num">${areaText(minArea(l),l.sqyd?"plot":l.type)}${minArea(l)!==maxArea(l) ? " – " + areaText(maxArea(l),l.sqyd?"plot":l.type) : ""}</b></div>
             <div class="fact"><span>Price range</span><b class="num">${!hasRate ? ON_REQ : money(startPrice(l)) + (minArea(l)!==maxArea(l) ? " – " + money(maxArea(l)*l.ratePerSft) : "")}</b></div>
             <div class="fact"><span>Possession</span><b>${esc(l.possession)}</b></div>
@@ -806,7 +811,7 @@ function renderDetail(l){
 
       <aside class="side">
 ${hasRate ? `        <div class="panel">
-          ${l.otp ? `<p class="eyebrow" style="margin:0 0 6px">One Time Purchase (OTP)</p>` : ""}<div class="rate-big num">${inr(l.ratePerSft)} <small>per sq.ft</small></div>
+          ${l.otp ? `<p class="eyebrow" style="margin:0 0 6px">One Time Purchase (OTP)</p>` : ""}<div class="rate-big num">${inr(rateShown(l))} <small>per ${unitName(l)}</small></div>
           ${alt.length ? `<div class="alt-rates">${alt.join("")}</div>` : ""}
           <div class="range calc">
             <div class="field"><label for="c-unit">Choose ${l.type==="plot"||l.type==="land" ? "a size" : "a unit"}</label>
