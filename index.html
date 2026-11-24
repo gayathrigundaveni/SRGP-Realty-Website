@@ -65,9 +65,9 @@ button,input,select,textarea{font:inherit;color:inherit}
 header.top{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:62px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
-.brand-logo{width:46px;height:46px;border-radius:10px;display:block;object-fit:cover;background:#000}
+.brand-logo{width:52px;height:52px;border-radius:10px;display:block;object-fit:contain;background:#fff}
 .hero-logo{width:132px;height:132px;border-radius:16px;display:block;background:#000;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-.foot-logo{width:88px;height:88px;border-radius:12px;display:block;margin-bottom:10px;background:#000}
+.foot-logo{width:88px;height:88px;border-radius:12px;display:block;margin-bottom:10px;background:#fff}
 @media (max-width:600px){.hero-logo{width:96px;height:96px}}
 .brand-mark{width:32px;height:32px;border-radius:8px;background:var(--accent);display:grid;place-items:center}
 .brand b{font-family:var(--font-display);font-size:20px;letter-spacing:-.01em}
@@ -298,7 +298,7 @@ footer{border-top:1px solid var(--line);padding:30px 0 20px;color:var(--muted);f
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#" id="home-link">
-      <img class="brand-logo" src="images/logo-sm.jpg" alt="SRGP Realty logo" width="46" height="46">
+      <img class="brand-logo" src="images/logo-sm.jpg" alt="SRGP Realty logo" width="52" height="52">
       <b>SRGP Realty</b><span>Hyderabad</span>
     </a>
     <nav class="top-nav" aria-label="Property types">
@@ -536,21 +536,21 @@ const LISTINGS = [
     featured:0.6, palette:["#1f5a34","#a9d3a0"]
   },
   {
-    id:"nature-orchid-2-bhongir", name:"Nature Orchid II", type:"plot", builder:"Nature Avenues Infra (marketed by Saluja Infra Developers)",
-    locality:"Bhongir", city:"Yadadri Bhuvanagiri", ratePerSft:16999/9, status:"New launch", possession:"Contact for details",
-    rera:"TG RERA P02000010606", landArea:"13 acres", totalUnits:"Contact for details", towers:"HMDA approved layout", facing:"Contact for details",
-    address:"Sy. No. 61/P & 84/P, Bhuvanagiri Village & Mandal, Yadadri Bhuvanagiri District, Telangana 508116",
-    approvals:"HMDA approved · LP No. 000055/LO/Plg/HMDA/2025 · TG RERA P02000010606 · Bank loan facility available",
-    image:"images/nature-orchid-2.jpg", imagePosCard:"50% 50%", heroWhole:true,
-    videos:[["images/nature-orchid-2.mp4","images/nature-orchid-2-video-frame.jpg","Site drive-through · 1.5 min"]],
-    gallery:[["images/nature-orchid-2.jpg","Nature Orchid II, open villa plots at Bhongir town"],["images/nature-orchid-2-layout.jpg","Layout plan with plot numbers"],["images/nature-orchid-2-route-map.jpg","Route map"],["images/nature-orchid-2-poster.jpg","Nature Orchid II with SRGP Realty"]],
-    sizesNote:"Price at ₹16,999 per sq.yd. Plot sizes are approximate, read from the layout plan: most plots are 30 ft wide (about 150 to 180 sq.yd), with larger corner plots up to about 490 sq.yd. Ask us for the exact size and availability of each plot.",
-    units:[{label:"Plot about 150 sq.yd (30' × 45')",area:1350},{label:"Plot about 160 sq.yd (30' × 48')",area:1440},{label:"Plot about 180 sq.yd (30' × 54')",area:1620},{label:"Corner plot about 398 sq.yd",area:3582},{label:"Corner plot about 490 sq.yd",area:4410}],
-    amenities:["Proposed 100 ft road","30 ft internal CC roads","Avenue plantation","Compound wall","Security","Parks","Underground drainage","Overhead water tank","Entrance arch","Underground electricity"],
-    nearby:[["Warangal National Highway (NH-163)","Adjacent"],["Uppal Junction","38 km"],["Hotel Vivera","Nearby"],["Proposed Bhongir Ring Road","Nearby"],["Proposed Regional Ring Road (RRR)","Nearby"],["Bhongir Fort","Nearby"],["Bhongir Town","Nearby"],["Yadagirigutta (Yadadri) Temple","On the route"],["AIIMS Bibinagar","On the route"],["Outer Ring Road","On the route"],["Infosys, Genpact, Singapore Township","On the route"]],
-    highlights:["HMDA approved, TG RERA registered","Spread over 13 acres, 38 km from Uppal Junction","Open villa plots at ₹16,999 per sq.yd","Next to the Warangal Highway (NH-163) in Bhongir town","Near the proposed Bhongir Ring Road and Regional Ring Road","Bank loan facility available"],
-    description:"Open villa plots in an HMDA approved layout at Bhongir town, next to the Warangal National Highway (NH-163) and near Hotel Vivera. The layout has a proposed 100 ft road, 30 ft internal CC roads, parks, underground drainage and electricity, and an entrance arch.",
-    featured:0.75, palette:["#2f6b2a","#cfe3a3"]
+    id:"suvarna-enclave-rampally", name:"Suvarna Enclave", type:"plot", builder:"SRGP Realty (marketing partner)",
+    locality:"Rampally, Keesara", city:"Hyderabad", ratePerSft:null, status:"Under construction", possession:"Contact for details",
+    rera:"Approval details on request", landArea:"About 16,365 sq.yd in plots", totalUnits:86, towers:"Draft layout, approval details on request", facing:"Contact for details",
+    address:"Rampally Village, Keesara, Medchal–Malkajgiri District, Telangana",
+    approvals:"Draft layout · ask us for the latest approval status",
+    image:"images/suvarna-impression.jpg",
+    videos:[["images/suvarna.mp4","images/suvarna-poster-frame.jpg","Site development · 34 sec"]],
+    gallery:[["images/suvarna-impression.jpg","Artist's impression of the setting"],["images/suvarna-site-plan.jpg","Draft site plan with plot numbers"]],
+    sizesNote:"86 plots from 149.94 to 496.91 sq.yd in the draft plot schedule; most plots are 166.67 sq.yd. Open the site plan photo to see every plot's position, and ask us for availability.",
+    units:[{label:"Plot 150 sq.yd · 6 plots",area:1350},{label:"Plot 166.67 sq.yd · 42 plots",area:1500},{label:"Plot about 175 sq.yd",area:1575},{label:"Plot about 200 sq.yd",area:1800},{label:"Plot 225 sq.yd",area:2025},{label:"Plot 250 sq.yd · 7 plots",area:2250},{label:"Plot 298 sq.yd",area:2683},{label:"Plot 312 sq.yd",area:2807},{label:"Plot about 497 sq.yd · 3 plots",area:4473}],
+    amenities:["30 ft internal roads","CC roads with kerbs","Avenue plantation","1,622.84 m² open space","Existing 30 ft road access","Approach road proposed to widen from 9 m to 30 m"],
+    nearby:[["ECIL","Nearby"],["Ghatkesar","Nearby"],["Keesara","Nearby"]],
+    highlights:["86 open plots in Rampally Village, Keesara","Plot sizes from 150 to about 497 sq.yd","30 ft internal roads with kerbs and avenue plantation","1,622.84 m² set aside as open space","Near ECIL and Ghatkesar"],
+    description:"Open plots in Rampally Village, Keesara, close to ECIL and Ghatkesar. The layout has 86 plots on 30 ft internal roads, with land set aside for open space. Road works, kerbs and avenue planting are under way on site.",
+    featured:0.8, palette:["#5a4a2b","#e6d3a3"]
   },
   {
     id:"dhatri-county-2-kompally", name:"Dhatri County-II", type:"villa", sqyd:true, builder:"Tridhatri Infra Developers (Sarvagna Projects)",

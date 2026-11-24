@@ -27,7 +27,7 @@ A property listings website for **SRGP Realty**, a real estate advisor based in 
 | Emerald Heights | Apartments | Kompally |
 | Vistara's Delight Heights | Apartments | Kompally |
 | Dhatri County-II | Villa plots | Railapur, Kompally |
-| Nature Orchid II | Open plots | Bhongir |
+| Suvarna Enclave | Open plots | Rampally, Keesara |
 
 ## How it is built
 
