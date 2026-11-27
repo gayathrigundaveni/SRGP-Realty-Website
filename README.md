@@ -26,6 +26,8 @@ A property listings website for **SRGP Realty**, a real estate advisor based in 
 | North Crest | Apartments | Kompally |
 | Emerald Heights | Apartments | Kompally |
 | Vistara's Delight Heights | Apartments | Kompally |
+| Viksha Aithra | Apartments | Kandlakoya, Kompally |
+| Viksha Myra | Apartments | Kompally |
 | Dhatri County-II | Villa plots | Railapur, Kompally |
 | Suvarna Enclave | Open plots | Rampally, Keesara |
 
